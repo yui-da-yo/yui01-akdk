@@ -1,0 +1,18 @@
+{
+    "include": [
+        {
+            "keyboard": "yui01",
+            "keymap": "vial",
+            "target": "uf2",
+            "flags": "EXTRAFLAGS=\"-DINIT_EE_HANDS_LEFT -DAUTO_KDK_TRACKBALL_ENABLED\"",
+            "name": "yui01_vial_left"
+        },
+        {
+            "keyboard": "yui01",
+            "keymap": "vial",
+            "target": "uf2",
+            "flags": "EXTRAFLAGS=\"-DINIT_EE_HANDS_RIGHT\"",
+            "name": "yui01_vial_right"
+        }
+    ]
+}
