@@ -14,5 +14,12 @@
 
 #define POINTING_DEVICE_AUTO_MOUSE_ENABLE
 #define VIAL_AUTO_MOUSE_LAYER 1
-#define VIAL_AUTO_MOUSE_TIMEOUT 500
+
+// --- ここを調整 ---
+// 最小の動き（1カウント）で反応させる設定を追加
+#define VIAL_AUTO_MOUSE_THRESHOLD 1 
+// 猶予時間を1.5秒（1500ms）に延長
+#define VIAL_AUTO_MOUSE_TIMEOUT 1500 
+
 #define VIAL_AUTO_MOUSE_ON_BY_DEFAULT
+
