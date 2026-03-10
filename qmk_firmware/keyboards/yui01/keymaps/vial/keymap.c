@@ -1,10 +1,5 @@
 #include QMK_KEYBOARD_H
 
-/* トラックボール機能がある時だけ宣言を読む */
-#ifdef AUTO_KDK_TRACKBALL_ENABLED
-report_mouse_t vial_auto_mouse_user_task(report_mouse_t mouse_report);
-#endif
-
 #define _L0 0
 #define _L1 1
 #define _L2 2
@@ -56,14 +51,3 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRNS, KC_TRNS
     )
 };
-
-#ifdef POINTING_DEVICE_ENABLE
-report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-/* トラックボールがある側（左手など）の時だけ Vial の処理を実行 */
-#ifdef AUTO_KDK_TRACKBALL_ENABLED
-    return vial_auto_mouse_user_task(mouse_report);
-#else
-    return mouse_report;
-#endif
-}
-#endif
