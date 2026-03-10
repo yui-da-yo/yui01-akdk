@@ -1,7 +1,7 @@
 #include QMK_KEYBOARD_H
 
-/* オートマウス機能の宣言を追加 */
-report_mouse_t vial_auto_mouse_task(report_mouse_t mouse_report);
+/* 関数名を user_task に修正 */
+report_mouse_t vial_auto_mouse_user_task(report_mouse_t mouse_report);
 
 #define _L0 0
 #define _L1 1
@@ -57,6 +57,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 #ifdef POINTING_DEVICE_ENABLE
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    return vial_auto_mouse_task(mouse_report);
+    /* ここも user_task に修正 */
+    return vial_auto_mouse_user_task(mouse_report);
 }
 #endif
