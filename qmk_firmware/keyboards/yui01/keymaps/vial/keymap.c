@@ -51,10 +51,4 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRNS, KC_TRNS
     )
 };
-#ifdef POINTING_DEVICE_ENABLE
-void pointing_device_task_user(report_mouse_t* mouse_report) {
-    #ifdef VIAL_AUTO_MOUSE_ENABLE
-        vial_auto_mouse_user_task(mouse_report);
-    #endif
-}
-#endif
+
