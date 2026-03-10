@@ -14,3 +14,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Layer 5
     [5] = LAYOUT(LAYOUT_Vial_Standard)
 };
+#ifdef POINTING_DEVICE_ENABLE
+void pointing_device_task_user(void) {
+    vial_auto_mouse_task();
+}
+#endif
