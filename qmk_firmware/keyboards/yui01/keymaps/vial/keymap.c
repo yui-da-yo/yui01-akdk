@@ -1,5 +1,8 @@
 #include QMK_KEYBOARD_H
 
+/* オートマウス機能の宣言を追加 */
+report_mouse_t vial_auto_mouse_task(report_mouse_t mouse_report);
+
 #define _L0 0
 #define _L1 1
 #define _L2 2
