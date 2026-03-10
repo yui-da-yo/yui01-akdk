@@ -2,6 +2,7 @@
     "name": "yui01",
     "vendorId": "0xFEED",
     "productId": "0x0000",
+    "layers": 6,  // ←この行をカンマも含めて追加します
     "matrix": {
         "rows": 10,
         "cols": 6
