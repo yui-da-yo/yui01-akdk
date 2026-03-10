@@ -12,6 +12,6 @@
 #define POINTING_DEVICE_INVERT_Y
 #define DYNAMIC_KEYMAP_LAYER_COUNT 6
 
-/* QMK標準のオートマウス設定名に変更 */
-#define AUTO_MOUSE_DEFAULT_LAYER 1
-#define AUTO_MOUSE_TIME_OUT 500
+/* Vial専用のオートマウス設定。名称を VIAL_... に戻します */
+#define VIAL_AUTO_MOUSE_LAYER 1
+#define VIAL_AUTO_MOUSE_TIMEOUT 500
