@@ -19,3 +19,4 @@ void pointing_device_task_user(void) {
     vial_auto_mouse_task();
 }
 #endif
+
