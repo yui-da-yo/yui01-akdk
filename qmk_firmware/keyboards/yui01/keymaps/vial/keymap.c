@@ -67,15 +67,20 @@ void pointing_device_init_user(void) {
     pointing_device_set_cpi(500);
 }
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // 0x5F80 が Vial における「User 0」キーの直接の番号です
-    switch (keycode) {
-        case 0x5F80: 
-            if (record->event.pressed) {
-                set_drag_scroll_enable(true);
-            } else {
-                set_drag_scroll_enable(false);
-            }
-            return false; 
+    // 0x5F80 は Vial の User 0 キーの内部コードです
+    if (keycode == 0x5F80) {
+        if (record->event.pressed) {
+            // スクロールモードを強制的にONにする
+            pointing_device_set_shared_report_conf(
+                pointing_device_get_shared_report_conf() | POINTING_DEVICE_CONF_DRAG_SCROLL
+            );
+        } else {
+            // スクロールモードをOFFにする
+            pointing_device_set_shared_report_conf(
+                pointing_device_get_shared_report_conf() & ~POINTING_DEVICE_CONF_DRAG_SCROLL
+            );
+        }
+        return false;
     }
     return true;
 }
