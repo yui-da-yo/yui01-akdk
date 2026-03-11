@@ -51,32 +51,37 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRNS, KC_TRNS
     )
 };
-// マウスの動きを検知してVialのオートマウス機能に伝える処理
-#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+// --- ここからが機能の心臓部 ---
+
+static bool is_scrolling = false; // スクロール中かどうかのスイッチ
+
+// 1. User 0 キーでスクロールのスイッチを切り替える
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (keycode == 0x5F80) { // Vialの User 0 キー
+        is_scrolling = record->event.pressed;
+        return false;
+    }
+    return true;
+}
+
+// 2. マウスの動きを処理する（オートマウス ＋ スクロール切り替え）
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    // x軸またはy軸に動きがあった場合
-    if (mouse_report.x != 0 || mouse_report.y != 0) {
-        // オートマウス機能を有効化し、タイマーをリセットする
+    if (is_scrolling) {
+        // スクロール中なら、移動量をスクロール量(v, h)に変換する
+        mouse_report.v = -mouse_report.y; 
+        mouse_report.h = mouse_report.x;
+        mouse_report.x = 0; // カーソルは止める
+        mouse_report.y = 0;
+    }
+
+    // オートマウスの維持判定（移動またはスクロールがあればタイマー更新）
+    if (mouse_report.x != 0 || mouse_report.y != 0 || mouse_report.v != 0 || mouse_report.h != 0) {
         set_auto_mouse_enable(true);
     }
     return mouse_report;
 }
-#endif
+
+// 3. 起動時の感度設定
 void pointing_device_init_user(void) {
-    // 起動時に感度を強制的に上書き
     pointing_device_set_cpi(500);
-}
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // 0x5F80 は Vial GUI 上の User 0 キーです
-    if (keycode == 0x5F80) {
-        if (record->event.pressed) {
-            // スクロールモードのスイッチを直接「真(1)」にする
-            g_pointing_device_conf.drag_scroll = 1;
-        } else {
-            // スクロールモードのスイッチを直接「偽(0)」にする
-            g_pointing_device_conf.drag_scroll = 0;
-        }
-        return false;
-    }
-    return true;
 }
