@@ -67,14 +67,14 @@ void pointing_device_init_user(void) {
     pointing_device_set_cpi(500);
 }
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // 0x5F80 は Vial の User 0 キーです
+    // 0x5F80 は Vial GUI 上の User 0 キーです
     if (keycode == 0x5F80) {
         if (record->event.pressed) {
-            // スクロールモードをONにする
-            pointing_device_set_shared_report_conf(POINTING_DEVICE_CONF_DRAG_SCROLL);
+            // スクロールモードのスイッチを直接「真(1)」にする
+            g_pointing_device_conf.drag_scroll = 1;
         } else {
-            // スクロールモードをOFF（通常の移動）にする
-            pointing_device_set_shared_report_conf(0);
+            // スクロールモードのスイッチを直接「偽(0)」にする
+            g_pointing_device_conf.drag_scroll = 0;
         }
         return false;
     }
