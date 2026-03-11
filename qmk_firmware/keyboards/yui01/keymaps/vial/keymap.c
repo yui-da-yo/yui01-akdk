@@ -67,9 +67,9 @@ void pointing_device_init_user(void) {
     pointing_device_set_cpi(500);
 }
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    // 0x5F80 が Vial における「User 0」キーの直接の番号です
     switch (keycode) {
-        // Vialの User 0 キーを指す正確な内部コード
-        case VIAL_SAFE_RANGE: 
+        case 0x5F80: 
             if (record->event.pressed) {
                 set_drag_scroll_enable(true);
             } else {
