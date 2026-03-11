@@ -67,15 +67,3 @@ void pointing_device_init_user(void) {
     pointing_device_set_cpi(500);
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case VIAL_USER00: 
-            if (record->event.pressed) {
-                set_drag_scroll_enable(true);
-            } else {
-                set_drag_scroll_enable(false);
-            }
-            return false; 
-    }
-    return true;
-}
