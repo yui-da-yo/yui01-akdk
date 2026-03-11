@@ -9,14 +9,14 @@
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_L0] = LAYOUT(
-        KC_A,    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_B,    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS
     ),
     [_L1] = LAYOUT(
-        KC_B, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_C, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
@@ -51,6 +51,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRNS, KC_TRNS
     )
 };
+
 // --- ここからが機能の心臓部 ---
 
 static bool is_scrolling = false; // スクロール中かどうかのスイッチ
@@ -66,19 +67,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 // 2. ドライバの上書きを防ぐ「最終処理」でスクロールを実現
 report_mouse_t pointing_device_task_combined_user(report_mouse_t mouse_report) {
+    // 修正ポイント：データを消す前に、移動（x, y）があるか判定してオートマウスを維持する
+    if (mouse_report.x != 0 || mouse_report.y != 0) {
+        set_auto_mouse_enable(true);
+    }
+
     if (is_scrolling) {
-        // ドライバが書き込んだ x, y をスクロール v, h に移し替える
+        // スクロール中なら、移動量をスクロール量(v, h)に変換する
         mouse_report.v = -mouse_report.y; 
         mouse_report.h = mouse_report.x;
-        // カーソル移動を確実に 0 にする
+        // カーソル移動をリセット
         mouse_report.x = 0;
         mouse_report.y = 0;
     }
 
-    // オートマウスの維持判定（移動・スクロールどちらかあればON）
-    if (mouse_report.x != 0 || mouse_report.y != 0 || mouse_report.v != 0 || mouse_report.h != 0) {
-        set_auto_mouse_enable(true);
-    }
     return mouse_report;
 }
 
