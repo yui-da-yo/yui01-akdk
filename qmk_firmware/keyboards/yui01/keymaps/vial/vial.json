@@ -46,9 +46,9 @@
     },
     "customKeycodes": [
         {
-            "name": "Drag Scroll",
-            "title": "Toggle Drag Scroll Mode",
-            "shortName": "Drag",
+            "name": "None",
+            "title": "nothing",
+            "shortName": "blank",
             "index": 0
         }
     ]
