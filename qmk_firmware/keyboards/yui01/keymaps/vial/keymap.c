@@ -50,8 +50,14 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     // 2. ドラッグスクロール処理
     // レイヤー2がONのときだけ、座標移動をスクロール(h, v)に振り替える
     if (IS_LAYER_ON(_L2)) {
-        mouse_report.h = mouse_report.x;
-        mouse_report.v = mouse_report.y;
+        /* 【改善ポイント】
+           - 方向反転：マイナスをつける
+           - 速度減速：4で割る（もっと遅くしたければ / 8 などに調整）
+        */
+        mouse_report.v = -(mouse_report.y / 4); // 上下反転 ＋ 1/4の速度
+        mouse_report.h = (mouse_report.x / 4);  // 左右も1/4の速度（反転が必要ならマイナスをつけてください）
+
+        // マウスカーソルは動かさない
         mouse_report.x = 0;
         mouse_report.y = 0;
     }
