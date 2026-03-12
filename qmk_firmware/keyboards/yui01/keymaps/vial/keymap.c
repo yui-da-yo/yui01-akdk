@@ -1,6 +1,6 @@
 #include QMK_KEYBOARD_H
 
-// ドラッグスクロールの状態を管理する変数
+// ドラッグスクロールの状態を管理するフラグ
 static bool is_drag_scroll = false;
 
 enum custom_keycodes {
@@ -59,12 +59,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     )
 };
 
-// マウスの動きを処理する関数（リンク先のロジックを反映）
-report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+// センサーデータを統合した後に呼ばれる関数
+// paw3222.c などが送ってきたデータをここで最終加工します
+report_mouse_t pointing_device_task_combined_user(report_mouse_t mouse_report) {
+    // 1. オートマウスレイヤーの起動（動きを検知したらONにする）
+    if (mouse_report.x != 0 || mouse_report.y != 0) {
+        #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+            set_auto_mouse_enable(true);
+        #endif
+    }
+
+    // 2. ドラッグスクロール処理
     if (is_drag_scroll) {
-        mouse_report.h = mouse_report.x; // 左右の動きを水平スクロールに
-        mouse_report.v = mouse_report.y; // 上下の動きを垂直スクロールに
-        mouse_report.x = 0;              // ポインタは動かさない
+        // XY移動量をスクロール量(H/V)に変換
+        mouse_report.h = mouse_report.x;
+        mouse_report.v = mouse_report.y;
+        // ポインタが動かないように移動量を0にする
+        mouse_report.x = 0;
         mouse_report.y = 0;
     }
     return mouse_report;
@@ -77,8 +88,9 @@ void pointing_device_init_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case DRAG_SCROLL:
+            // ボタンが押されている間フラグをON、離せばOFF
             is_drag_scroll = record->event.pressed;
-            return false; 
+            return false;
     }
     return true;
 }
