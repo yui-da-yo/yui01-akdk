@@ -1,9 +1,14 @@
 #include QMK_KEYBOARD_H
-// --- 追記：ここから ---
+
+/* --- 修正箇所：ここから --- */
+#include "vial.h"            // USER00やVIAL_SAFE_RANGEの定義を読み込みます
+#include "pointing_device.h" // pointing_device_set_drag_scroll_enable を使うために必要です
+
 enum custom_keycodes {
-    DRAG_SCROLL = USER00,
+    DRAG_SCROLL = VIAL_SAFE_RANGE, // Vialのカスタムキーコードとして安全な範囲を割り当てます
 };
-// --- 追記：ここまで ---
+/* --- 修正箇所：ここまで --- */
+
 #define _L0 0
 #define _L1 1
 #define _L2 2
@@ -55,34 +60,31 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRNS, KC_TRNS
     )
 };
-// マウスの動きを検知してVialのオートマウス機能に伝える処理
+
 #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    // x軸またはy軸に動きがあった場合
     if (mouse_report.x != 0 || mouse_report.y != 0) {
-        // オートマウス機能を有効化し、タイマーをリセットする
         set_auto_mouse_enable(true);
     }
     return mouse_report;
 }
 #endif
+
 void pointing_device_init_user(void) {
-    // 起動時に感度を強制的に上書き
     pointing_device_set_cpi(500);
 }
-// --- 追記：ここから ---
+
+/* --- 修正箇所：ここから --- */
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case DRAG_SCROLL:
             if (record->event.pressed) {
-                // キーを押している間はドラッグスクロールを有効にする
                 pointing_device_set_drag_scroll_enable(true);
             } else {
-                // キーを離したら無効にする（通常のポインタ移動に戻る）
                 pointing_device_set_drag_scroll_enable(false);
             }
-            return false; // 他のキー処理（文字入力など）を行わない
+            return false; 
     }
     return true;
 }
-// --- 追記：ここまで ---
+/* --- 修正箇所：ここまで --- */
