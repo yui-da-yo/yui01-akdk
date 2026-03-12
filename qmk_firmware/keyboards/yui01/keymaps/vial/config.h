@@ -16,10 +16,16 @@
 #define VIAL_AUTO_MOUSE_LAYER 1
 // 最小の動き（1カウント）で反応させる設定を追加
 #define VIAL_AUTO_MOUSE_THRESHOLD 1 
-// 猶予時間を1.5秒（1500ms）に延長
+// 猶予時間を1秒（1000ms）に延長
 #define VIAL_AUTO_MOUSE_TIMEOUT 1000 
 #define VIAL_AUTO_MOUSE_ON_BY_DEFAULT
 
 #define POINTING_DEVICE_CPI 400
-//#define POINTING_DEVICE_DRAG_SCROLL_ENABLE
 
+/* --- 修正箇所：ここから --- */
+// ドラッグスクロール機能を有効化
+#define POINTING_DEVICE_DRAG_SCROLL_ENABLE
+
+// ボタンを押している間だけスクロールにする設定を追加
+#define POINTING_DEVICE_DRAG_SCROLL_MOMENTARY
+/* --- 修正箇所：ここまで --- */
