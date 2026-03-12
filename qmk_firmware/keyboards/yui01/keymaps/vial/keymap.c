@@ -1,13 +1,12 @@
 #include QMK_KEYBOARD_H
 
-/* --- カスタムキーコードの定義 --- */
-enum custom_keycodes {
-    DRAG_SCROLL = SAFE_RANGE, // QMK標準の安全な範囲を使用します
-};
+/* --- ドラッグスクロールのフラグを直接操作するための外部参照 --- */
+// リンクエラーを回避するため、QMK内部の変数を直接参照します
+extern bool g_drag_scroll_enable;
 
-/* --- 関数のプロトタイプ宣言 --- */
-// ビルド時に「関数が見つからない」というエラーを防ぐために明示します
-void pointing_device_set_drag_scroll_enable(bool enable);
+enum custom_keycodes {
+    DRAG_SCROLL = SAFE_RANGE,
+};
 
 #define _L0 0
 #define _L1 1
@@ -77,13 +76,8 @@ void pointing_device_init_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case DRAG_SCROLL:
-            if (record->event.pressed) {
-                // キーを押している間はドラッグスクロールを有効にする
-                pointing_device_set_drag_scroll_enable(true);
-            } else {
-                // キーを離したら無効にする（通常のポインタ移動に戻る）
-                pointing_device_set_drag_scroll_enable(false);
-            }
+            // 直接内部変数を書き換えてドラッグスクロールを制御します
+            g_drag_scroll_enable = record->event.pressed;
             return false; 
     }
     return true;
