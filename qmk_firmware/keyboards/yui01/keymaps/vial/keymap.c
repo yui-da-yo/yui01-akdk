@@ -1,5 +1,9 @@
 #include QMK_KEYBOARD_H
-
+// --- 追記：ここから ---
+enum custom_keycodes {
+    DRAG_SCROLL = USER00,
+};
+// --- 追記：ここまで ---
 #define _L0 0
 #define _L1 1
 #define _L2 2
@@ -9,14 +13,14 @@
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_L0] = LAYOUT(
-        KC_X,    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_A,    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS
     ),
     [_L1] = LAYOUT(
-        KC_Y, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_B, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
@@ -66,3 +70,19 @@ void pointing_device_init_user(void) {
     // 起動時に感度を強制的に上書き
     pointing_device_set_cpi(500);
 }
+// --- 追記：ここから ---
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case DRAG_SCROLL:
+            if (record->event.pressed) {
+                // キーを押している間はドラッグスクロールを有効にする
+                pointing_device_set_drag_scroll_enable(true);
+            } else {
+                // キーを離したら無効にする（通常のポインタ移動に戻る）
+                pointing_device_set_drag_scroll_enable(false);
+            }
+            return false; // 他のキー処理（文字入力など）を行わない
+    }
+    return true;
+}
+// --- 追記：ここまで ---
