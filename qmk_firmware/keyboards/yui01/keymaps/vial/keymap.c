@@ -1,11 +1,17 @@
 #include QMK_KEYBOARD_H
 
-// ドラッグスクロールの状態を管理するフラグ
+// ドラッグスクロールの状態
 static bool is_drag_scroll = false;
+// オートマウス用のタイマー
+static uint16_t mouse_timer = 0;
 
 enum custom_keycodes {
     DRAG_SCROLL = SAFE_RANGE,
 };
+
+// レイヤー定義（あなたの設定に合わせて調整してください）
+#define L_BASE 0
+#define L_MOUSE 1 // オートマウスで移動したいレイヤー番号
 
 #define _L0 0
 #define _L1 1
@@ -59,22 +65,26 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     )
 };
 
-// センサーデータを統合した後に呼ばれる関数
-// paw3222.c などが送ってきたデータをここで最終加工します
-report_mouse_t pointing_device_task_combined_user(report_mouse_t mouse_report) {
-    // 1. オートマウスレイヤーの起動（動きを検知したらONにする）
+// 最も優先度の高い、OS送信直前のフック
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    // 1. オートマウス機能の自前実装
     if (mouse_report.x != 0 || mouse_report.y != 0) {
-        #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
-            set_auto_mouse_enable(true);
-        #endif
+        // 動いたらマウスレイヤーをONにし、タイマーをリセット
+        if (!IS_LAYER_ON(L_MOUSE)) {
+            layer_on(L_MOUSE);
+        }
+        mouse_timer = timer_read();
+    } else {
+        // 500ms以上動きがなければベースレイヤーに戻る
+        if (IS_LAYER_ON(L_MOUSE) && timer_elapsed(mouse_timer) > 500) {
+            layer_off(L_MOUSE);
+        }
     }
 
     // 2. ドラッグスクロール処理
     if (is_drag_scroll) {
-        // XY移動量をスクロール量(H/V)に変換
         mouse_report.h = mouse_report.x;
         mouse_report.v = mouse_report.y;
-        // ポインタが動かないように移動量を0にする
         mouse_report.x = 0;
         mouse_report.y = 0;
     }
@@ -88,7 +98,6 @@ void pointing_device_init_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case DRAG_SCROLL:
-            // ボタンが押されている間フラグをON、離せばOFF
             is_drag_scroll = record->event.pressed;
             return false;
     }
