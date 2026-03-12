@@ -1,13 +1,13 @@
 #include QMK_KEYBOARD_H
 
-/* --- 修正箇所：ここから --- */
-#include "vial.h"            // USER00やVIAL_SAFE_RANGEの定義を読み込みます
-#include "pointing_device.h" // pointing_device_set_drag_scroll_enable を使うために必要です
-
+/* --- カスタムキーコードの定義 --- */
 enum custom_keycodes {
-    DRAG_SCROLL = VIAL_SAFE_RANGE, // Vialのカスタムキーコードとして安全な範囲を割り当てます
+    DRAG_SCROLL = SAFE_RANGE, // QMK標準の安全な範囲を使用します
 };
-/* --- 修正箇所：ここまで --- */
+
+/* --- 関数のプロトタイプ宣言 --- */
+// ビルド時に「関数が見つからない」というエラーを防ぐために明示します
+void pointing_device_set_drag_scroll_enable(bool enable);
 
 #define _L0 0
 #define _L1 1
@@ -74,17 +74,17 @@ void pointing_device_init_user(void) {
     pointing_device_set_cpi(500);
 }
 
-/* --- 修正箇所：ここから --- */
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case DRAG_SCROLL:
             if (record->event.pressed) {
+                // キーを押している間はドラッグスクロールを有効にする
                 pointing_device_set_drag_scroll_enable(true);
             } else {
+                // キーを離したら無効にする（通常のポインタ移動に戻る）
                 pointing_device_set_drag_scroll_enable(false);
             }
             return false; 
     }
     return true;
 }
-/* --- 修正箇所：ここまで --- */
