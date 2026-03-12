@@ -55,13 +55,13 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         scroll_accum_v += mouse_report.y;
         scroll_accum_h += mouse_report.x;
 
-        // 6で割った分だけスクロールさせる（上下はマイナスで反転）
-        mouse_report.v = -(scroll_accum_v / 6);
-        mouse_report.h = (scroll_accum_h / 6);
+        // 10で割った分だけスクロールさせる（上下はマイナスで反転）
+        mouse_report.v = -(scroll_accum_v / 10);
+        mouse_report.h = (scroll_accum_h / 10);
 
         // スクロールに使った分だけ貯金箱から引く（余りは次回に持ち越し）
-        scroll_accum_v %= 6;
-        scroll_accum_h %= 6;
+        scroll_accum_v %= 10;
+        scroll_accum_h %= 10;
 
         // カーソルは動かさない
         mouse_report.x = 0;
