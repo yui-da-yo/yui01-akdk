@@ -1,8 +1,7 @@
 #include QMK_KEYBOARD_H
 
-/* --- ドラッグスクロールのフラグを直接操作するための外部参照 --- */
-// リンクエラーを回避するため、QMK内部の変数を直接参照します
-extern bool g_drag_scroll_enable;
+// ドラッグスクロールの状態を管理する変数
+static bool is_drag_scroll = false;
 
 enum custom_keycodes {
     DRAG_SCROLL = SAFE_RANGE,
@@ -60,14 +59,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     )
 };
 
-#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+// マウスの動きを処理する関数（リンク先のロジックを反映）
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    if (mouse_report.x != 0 || mouse_report.y != 0) {
-        set_auto_mouse_enable(true);
+    if (is_drag_scroll) {
+        mouse_report.h = mouse_report.x; // 左右の動きを水平スクロールに
+        mouse_report.v = mouse_report.y; // 上下の動きを垂直スクロールに
+        mouse_report.x = 0;              // ポインタは動かさない
+        mouse_report.y = 0;
     }
     return mouse_report;
 }
-#endif
 
 void pointing_device_init_user(void) {
     pointing_device_set_cpi(500);
@@ -76,8 +77,7 @@ void pointing_device_init_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case DRAG_SCROLL:
-            // 直接内部変数を書き換えてドラッグスクロールを制御します
-            g_drag_scroll_enable = record->event.pressed;
+            is_drag_scroll = record->event.pressed;
             return false; 
     }
     return true;
