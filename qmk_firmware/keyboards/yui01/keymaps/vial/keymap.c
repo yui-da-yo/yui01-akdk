@@ -1,11 +1,15 @@
 #include QMK_KEYBOARD_H
 
-// オートマウス用のタイマー（マウスレイヤーからの復帰用）
+// オートマウス用のタイマー
 static uint16_t mouse_timer = 0;
 
-// レイヤー定義の整理
+// 【追加】スクロール移動量の貯金箱（蓄積変数）
+static int16_t scroll_accum_v = 0;
+static int16_t scroll_accum_h = 0;
+
+// レイヤー定義
 #define _L0 0
-#define _L1 1 // オートマウス用（通常マウス操作）
+#define _L1 1 // オートマウス用
 #define _L2 2 // ドラッグスクロール専用
 #define _L3 3
 #define _L4 4
@@ -32,34 +36,40 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_L5] = LAYOUT(KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS)
 };
 
-// 全てのマウス制御をここで行う
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    // 1. オートマウス判定（マウスが動いたらレイヤー1へ）
+    // 1. オートマウス判定
     if (mouse_report.x != 0 || mouse_report.y != 0) {
         if (!IS_LAYER_ON(_L1)) {
             layer_on(_L1);
         }
         mouse_timer = timer_read();
     } else {
-        // 500ms動きがなければレイヤー1を解除
         if (IS_LAYER_ON(_L1) && timer_elapsed(mouse_timer) > 500) {
             layer_off(_L1);
         }
     }
 
-    // 2. ドラッグスクロール処理
-    // レイヤー2がONのときだけ、座標移動をスクロール(h, v)に振り替える
+    // 2. ドラッグスクロール処理（蓄積方式）
     if (IS_LAYER_ON(_L2)) {
-        /* 【改善ポイント】
-           - 方向反転：マイナスをつける
-           - 速度減速：4で割る（もっと遅くしたければ / 8 などに調整）
-        */
-        mouse_report.v = -(mouse_report.y / 4); // 上下反転 ＋ 1/4の速度
-        mouse_report.h = (mouse_report.x / 4);  // 左右も1/4の速度（反転が必要ならマイナスをつけてください）
+        // 現在の移動量を貯金箱に足す
+        scroll_accum_v += mouse_report.y;
+        scroll_accum_h += mouse_report.x;
 
-        // マウスカーソルは動かさない
+        // 4で割った分だけスクロールさせる（上下はマイナスで反転）
+        mouse_report.v = -(scroll_accum_v / 4);
+        mouse_report.h = (scroll_accum_h / 4);
+
+        // スクロールに使った分だけ貯金箱から引く（余りは次回に持ち越し）
+        scroll_accum_v %= 4;
+        scroll_accum_h %= 4;
+
+        // カーソルは動かさない
         mouse_report.x = 0;
         mouse_report.y = 0;
+    } else {
+        // レイヤーを離したときは貯金箱を空にする
+        scroll_accum_v = 0;
+        scroll_accum_h = 0;
     }
 
     return mouse_report;
