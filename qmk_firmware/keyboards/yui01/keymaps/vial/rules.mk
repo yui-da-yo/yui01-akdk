@@ -3,7 +3,7 @@ POINTING_DEVICE_AUTO_MOUSE_ENABLE = yes
 VIAL_AUTO_MOUSE_ENABLE = yes
 VIAL_AUTO_MOUSE_LAYER_ENABLE = yes
 
-# 修正箇所：# を消して有効化します
+# この下の行の「#」を削除しました
 MOUSEKEY_ENABLE = yes
 
 VIA_ENABLE = yes
