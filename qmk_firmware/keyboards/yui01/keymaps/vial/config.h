@@ -24,7 +24,7 @@
 // Y軸（縦方向）の移動を反転（左手トラボのため）
 #define POINTING_DEVICE_INVERT_Y
 // マウスカーソルの移動速度（数値が大きいほど速い）
-#define POINTING_DEVICE_CPI 500
+#define POINTING_DEVICE_CPI 600
 
 // （３）オートマウスレイヤ関連設定
 // オートマウスレイヤー機能を有効化
