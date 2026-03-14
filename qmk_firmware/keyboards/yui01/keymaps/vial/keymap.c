@@ -117,5 +117,5 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 // （５）デバイス初期化設定
 void pointing_device_init_user(void) {
     // 起動時の初期解像度（CPI）を設定
-    pointing_device_set_cpi(500);
+    pointing_device_set_cpi(600);
 }
