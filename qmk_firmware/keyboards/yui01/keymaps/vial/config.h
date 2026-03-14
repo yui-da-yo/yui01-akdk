@@ -9,7 +9,7 @@
 #define VIAL_TAP_DANCE_ENTRIES 20
 // コンボ機能の最大登録数
 #define VIAL_COMBO_ENTRIES 20
-// レイヤー数6（0～5レイヤー）
+// レイヤー数8（0～7レイヤー）
 #define DYNAMIC_KEYMAP_LAYER_COUNT 8
 // RP2040等のフラッシュメモリ容量指定
 #define PICO_FLASH_SIZE_BYTES (1 * 1024 * 1024)
