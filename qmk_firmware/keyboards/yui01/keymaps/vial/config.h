@@ -6,11 +6,11 @@
 // VIAL識別用の固有ID
 #define VIAL_KEYBOARD_UID {0xc4, 0xfd, 0xa3, 0x5f, 0x87, 0xa9, 0x48, 0xca}
 // タップダンス機能の最大登録数
-#define VIAL_TAP_DANCE_ENTRIES 10
+#define VIAL_TAP_DANCE_ENTRIES 20
 // コンボ機能の最大登録数
-#define VIAL_COMBO_ENTRIES 10
+#define VIAL_COMBO_ENTRIES 20
 // レイヤー数6（0～5レイヤー）
-#define DYNAMIC_KEYMAP_LAYER_COUNT 6
+#define DYNAMIC_KEYMAP_LAYER_COUNT 8
 // RP2040等のフラッシュメモリ容量指定
 #define PICO_FLASH_SIZE_BYTES (1 * 1024 * 1024)
 
@@ -24,7 +24,7 @@
 // Y軸（縦方向）の移動を反転（左手トラボのため）
 #define POINTING_DEVICE_INVERT_Y
 // マウスカーソルの移動速度（数値が大きいほど速い）
-#define POINTING_DEVICE_CPI 400
+#define POINTING_DEVICE_CPI 500
 
 // （３）オートマウスレイヤ関連設定
 // オートマウスレイヤー機能を有効化
